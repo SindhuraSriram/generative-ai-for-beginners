@@ -1,39 +1,42 @@
-from openai import AzureOpenAI
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-# load environment variables from .env file
+# Load environment variables from .env file
 load_dotenv()
 
-# configure Azure OpenAI service client 
-client = AzureOpenAI(
-  azure_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"], 
-  api_key=os.environ['AZURE_OPENAI_API_KEY'],  
-  api_version = "2023-10-01-preview"
-  )
+# Initialize OpenAI client
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-deployment=os.environ['AZURE_OPENAI_DEPLOYMENT']
+# Model choice — use "gpt-3.5-turbo" or "gpt-4" depending on access
+model = "gpt-3.5-turbo"
 
-# add your completion code
-question = input("Ask your questions on python language to your study buddy: ")
+# Ask user for question
+question = input("Ask your questions on Python language to your study buddy: ")
+
+# Prompt format
 prompt = f"""
-You are an expert on the python language.
+You are an expert on the Python language.
 
-Whenever certain questions are asked, you need to provide response in below format.
+Whenever certain questions are asked, you need to provide responses in the following format:
 
 - Concept
 - Example code showing the concept implementation
-- explanation of the example and how the concept is done for the user to understand better.
+- Explanation of the example and how the concept is implemented to help the user understand better.
 
 Provide answer for the question: {question}
 """
-messages = [{"role": "user", "content": prompt}]  
-# make completion
-completion = client.chat.completions.create(model=deployment, messages=messages)
 
-# print response
+# Construct message
+messages = [{"role": "user", "content": prompt}]
+
+# Generate response
+completion = client.chat.completions.create(
+    model=model,
+    messages=messages,
+    temperature=0.3
+)
+
+# Output result
+print("\n===== Python Study Buddy Answer =====\n")
 print(completion.choices[0].message.content)
-
-#  very unhappy _____.
-
-# Once upon a time there was a very unhappy mermaid.
