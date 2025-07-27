@@ -1,30 +1,26 @@
 # pylint: disable=all
-from openai import AzureOpenAI
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-# load environment variables from .env file
+# Load environment variables from .env file
 load_dotenv()
 
-# configure Azure OpenAI service client 
-client = AzureOpenAI(
-  azure_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"], 
-  api_key=os.environ['AZURE_OPENAI_API_KEY'],  
-  api_version = "2024-02-01"
-#  api_version = "2023-05-15"
-  )
+# Initialize OpenAI client
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-deployment=os.environ['AZURE_OPENAI_DEPLOYMENT']
+# Use model name directly (e.g., "gpt-3.5-turbo" or "gpt-4")
+model = "gpt-3.5-turbo"
 
-# add your completion code
+# Define the prompt
 prompt = "Complete the following: Once upon a time there was a"
-messages = [{"role": "user", "content": prompt}]  
-# make completion
-completion = client.chat.completions.create(model=deployment, messages=messages)
+messages = [{"role": "user", "content": prompt}]
 
-# print response
+# Make completion
+completion = client.chat.completions.create(
+    model=model,
+    messages=messages
+)
+
+# Print response
 print(completion.choices[0].message.content)
-
-#  very unhappy _____.
-
-# Once upon a time there was a very unhappy mermaid.
